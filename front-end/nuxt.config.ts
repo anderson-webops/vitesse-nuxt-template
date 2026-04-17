@@ -1,3 +1,5 @@
+import process from 'node:process'
+
 import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
 
@@ -35,6 +37,11 @@ export default defineNuxtConfig({
 
   colorMode: {
     classSuffix: '',
+  },
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3006',
+    },
   },
 
   future: {

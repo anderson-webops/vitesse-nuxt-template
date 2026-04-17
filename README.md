@@ -1,80 +1,52 @@
-<p align="center">
-<img src="https://user-images.githubusercontent.com/11247099/140462375-7b7ac4db-35b7-453c-8a05-13d8d20282c4.png" width="600"/>
-</p>
+# Vitesse Nuxt Monorepo Template
 
-<h2 align="center">
-<a href="https://github.com/antfu/vitesse">Vitesse</a> for Nuxt 4
-</h2><br>
+This repo starts from [antfu/vitesse-nuxt](https://github.com/antfu/vitesse-nuxt) and reshapes it into the monorepo pattern used by the other sites in this directory.
 
-<p align="center">
-<br>
-<a href="https://vitesse-nuxt3.netlify.app/">🖥 Online Preview</a>
-<br><br>
-<a href="https://stackblitz.com/github/antfu/vitesse-nuxt"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt=""></a>
-</p>
+## Structure
 
-## Features
+- `front-end`: Nuxt 4 app derived from Vitesse Nuxt
+- `back-end`: separate Express API package
+- root `package.json`: npm workspace entrypoint
+- root `tsconfig.base.json`: shared TypeScript settings
+- root `Dockerfile` and `netlify.toml`: deploy helpers for the static front-end build
 
-- 💚 [Nuxt 4](https://nuxt.com/) - SSR, ESR, File-based routing, components auto importing, modules, etc.
+## Scripts
 
-- ⚡️ Vite - Instant HMR.
-
-- 🎨 [UnoCSS](https://github.com/unocss/unocss) - The instant on-demand atomic CSS engine.
-
-- 😃 Use icons from any icon sets in Pure CSS, powered by [UnoCSS](https://github.com/unocss/unocss).
-
-- 🔥 The `<script setup>` syntax.
-
-- 🍍 [State Management via Pinia](https://github.com/vuejs/pinia), see [./app/composables/user.ts](./app/composables/user.ts).
-
-- 📑 [Layout system](./app/layouts).
-
-- 📥 APIs auto importing - for Composition API, VueUse and custom composables.
-
-- 🏎 Zero-config cloud functions and deploy.
-
-- 🦾 TypeScript, of course.
-
-- 📲 [PWA](https://github.com/vite-pwa/nuxt) with offline support and auto-update behavior.
-
-## Plugins
-
-### Nuxt Modules
-
-- [VueUse](https://github.com/vueuse/vueuse) - collection of useful composition APIs.
-- [ColorMode](https://github.com/nuxt-modules/color-mode) - dark and Light mode with auto detection made easy with Nuxt.
-- [UnoCSS](https://github.com/unocss/unocss) - the instant on-demand atomic CSS engine.
-- [Pinia](https://github.com/vuejs/pinia) - intuitive, type safe, light and flexible Store for Vue.
-- [VitePWA](https://github.com/vite-pwa/nuxt) - zero-config PWA Plugin for Nuxt 4.
-- [DevTools](https://github.com/nuxt/devtools) - unleash Nuxt Developer Experience.
-
-## IDE
-
-We recommend using [VS Code](https://code.visualstudio.com/) with [Volar](https://github.com/johnsoncodehk/volar) to get the best experience (You might want to disable [Vetur](https://vuejs.github.io/vetur/) if you have it).
-
-## Variations
-
-- [vitesse](https://github.com/antfu/vitesse) - Opinionated Vite Starter Template
-- [vitesse-lite](https://github.com/antfu/vitesse-lite) - Lightweight version of Vitesse
-- [vitesse-nuxt-bridge](https://github.com/antfu/vitesse-nuxt-bridge) - Vitesse for Nuxt 2 with Bridge
-- [vitesse-webext](https://github.com/antfu/vitesse-webext) - WebExtension Vite starter template
-
-## Try it now!
-
-### Online
-
-<a href="https://stackblitz.com/github/antfu/vitesse-nuxt"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt=""></a>
-
-### GitHub Template
-
-[Create a repo from this template on GitHub](https://github.com/antfu/vitesse-nuxt/generate).
-
-### Clone to local
-
-If you prefer to do it manually with the cleaner git history
+From the repo root:
 
 ```bash
-npx degit antfu/vitesse-nuxt my-nuxt-app
-cd my-nuxt-app
-pnpm i # If you don't have pnpm installed, run: npm install -g pnpm
+npm install
+npm run dev
+npm run server
 ```
+
+Useful root commands:
+
+- `npm run build`: generate the front-end and compile the back-end
+- `npm run typecheck`: run front-end and back-end typechecks
+- `npm run lint`: lint both workspaces
+
+## Front-End
+
+The Nuxt app lives in `front-end` and keeps the upstream Vitesse Nuxt app structure:
+
+- `front-end/app`
+- `front-end/public`
+- `front-end/nuxt.config.ts`
+
+The demo page-view widget now calls the separate back-end API instead of relying on an inline Nuxt server route.
+
+Set `NUXT_PUBLIC_API_BASE_URL` when the front-end should target a non-default API host.
+
+## Back-End
+
+The API lives in `back-end` and exposes:
+
+- `GET /api/health`
+- `GET /api/pageview`
+
+Default port: `3006`
+
+## Git Remotes
+
+`antfu/vitesse-nuxt` is configured as the `upstream` remote so you can keep your own GitHub repo as `origin`.

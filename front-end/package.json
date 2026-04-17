@@ -1,0 +1,50 @@
+{
+  "name": "front-end",
+  "type": "module",
+  "version": "2.0.0",
+  "private": true,
+  "description": "",
+  "author": "Jacob Anderson",
+  "license": "ISC",
+  "keywords": [],
+  "main": "dist/script.js",
+  "scripts": {
+    "build": "nuxt generate",
+    "dev": "nuxt dev --port 3333 --open",
+    "start": "nuxt dev --port 3333 --open --host",
+    "serve": "nuxt dev --port 3333 --open --host",
+    "preview": "nuxt preview",
+    "preview-https": "npx serve .output/public",
+    "typecheck": "nuxt typecheck",
+    "up": "taze major -I",
+    "lint": "eslint .",
+    "lint-fix": "eslint . --fix",
+    "prepare": "nuxt prepare"
+  },
+  "dependencies": {
+    "@vueuse/core": "^14.0.0",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.22"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.2.14",
+    "@iconify-json/twemoji": "^1.2.4",
+    "@nuxt/devtools": "^3.0.0-beta.2",
+    "@nuxt/eslint": "^1.9.0",
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@pinia/nuxt": "^0.11.2",
+    "@unocss/eslint-config": "^66.5.4",
+    "@unocss/nuxt": "^66.5.4",
+    "@vite-pwa/nuxt": "^1.0.7",
+    "@vueuse/nuxt": "^14.0.0",
+    "nuxt": "^4.2.0",
+    "unocss": "^66.5.4",
+    "vue-tsc": "^3.1.2"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ]
+}
