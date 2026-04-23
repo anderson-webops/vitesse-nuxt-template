@@ -6,6 +6,7 @@
 		"moduleResolution": "nodenext",
 		"sourceMap": true,
 		"outDir": "./dist",
+		"rootDir": "./src",
 		"allowSyntheticDefaultImports": true,
 		"esModuleInterop": true
 	},

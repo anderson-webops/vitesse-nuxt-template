@@ -1,4 +1,4 @@
-import { env, exit } from 'node:process'
+import process, { env, exit } from 'node:process'
 
 import { createApp } from './app.js'
 import 'dotenv/config'

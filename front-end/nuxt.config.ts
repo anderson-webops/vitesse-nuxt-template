@@ -1,7 +1,5 @@
 import process from 'node:process'
-
-import { pwa } from './app/config/pwa'
-import { appDescription } from './app/constants/index'
+import { appDescription } from './src/constants/index'
 
 export default defineNuxtConfig({
   modules: [
@@ -9,7 +7,6 @@ export default defineNuxtConfig({
     '@unocss/nuxt',
     '@pinia/nuxt',
     '@nuxtjs/color-mode',
-    '@vite-pwa/nuxt',
     '@nuxt/eslint',
   ],
 
@@ -43,6 +40,8 @@ export default defineNuxtConfig({
       apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3006',
     },
   },
+
+  srcDir: 'src',
 
   future: {
     compatibilityVersion: 4,
@@ -79,6 +78,4 @@ export default defineNuxtConfig({
       },
     },
   },
-
-  pwa,
 })
