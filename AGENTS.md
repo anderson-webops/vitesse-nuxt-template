@@ -48,3 +48,23 @@
   the same session.
 - Keep `package-lock.json` synchronized with dependency changes before every commit or push.
 - Prefer small, logically grouped commits over one mixed commit.
+
+## Dependency & Lockfile Discipline
+
+- Treat the repo-root `npm ci` path as the source of truth for deploy readiness.
+- Any time `package.json`, any workspace `package.json`, dependency ranges, `package-lock.json`, or dependency update tooling changes, verify lockfile parity from the repo root before committing.
+- Do not rely on `npm install` fallback as success. A change is not deploy-ready unless root `npm ci` succeeds.
+
+Required dependency verification before every commit/push:
+1. Run `npm ci` from the repository root.
+2. Run `npm run lint`.
+3. Run `npm run typecheck`.
+4. Run `npm run build`.
+5. If API or back-end behavior changed and the repo has a back-end workspace, run `npm run -w back-end test` or the repo's equivalent API test command.
+
+If `npm ci` fails because `package.json` and `package-lock.json` are out of sync:
+1. Run `npm install --package-lock-only --ignore-scripts --no-fund --no-audit` from the repository root.
+2. Re-run `npm ci` from the repository root.
+3. Commit the resulting `package-lock.json` change with the related dependency/package change.
+
+Never commit or push dependency/package changes if root `npm ci` fails.
