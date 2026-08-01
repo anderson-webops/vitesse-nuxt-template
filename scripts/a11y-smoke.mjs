@@ -5,7 +5,7 @@ import { createRequire } from 'node:module'
 import { dirname, resolve } from 'node:path'
 import process from 'node:process'
 import { fileURLToPath } from 'node:url'
-import puppeteer from 'puppeteer'
+import puppeteer from 'puppeteer-core'
 
 const require = createRequire(import.meta.url)
 const axeSourcePath = require.resolve('axe-core/axe.min.js')
@@ -162,6 +162,7 @@ function startFrontend() {
       ...process.env,
       BROWSER: 'none',
       DISABLE_ANALYTICS: 'true',
+      DEV_API_ORIGIN: `http://127.0.0.1:${apiPort}`,
       NUXT_A11Y_SCAN: 'true',
       NUXT_TELEMETRY_DISABLED: '1',
       NUXT_PUBLIC_APP_URL: baseUrl,

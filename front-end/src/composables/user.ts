@@ -1,6 +1,7 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', () => {
+  const maximumSavedNames = 20
   /**
    * Current named of the user.
    */
@@ -17,10 +18,22 @@ export const useUserStore = defineStore('user', () => {
    * @param name - new name to set
    */
   function setNewName(name: string) {
-    if (savedName.value)
+    const normalizedName = name.trim().slice(0, 80)
+    if (!normalizedName)
+      return
+
+    if (savedName.value && savedName.value !== normalizedName) {
       previousNames.value.add(savedName.value)
 
-    savedName.value = name
+      while (previousNames.value.size > maximumSavedNames) {
+        const oldestName = previousNames.value.values().next().value
+        if (oldestName === undefined)
+          break
+        previousNames.value.delete(oldestName)
+      }
+    }
+
+    savedName.value = normalizedName
   }
 
   return {

@@ -5,6 +5,10 @@
 **/.nuxt
 **/*.tsbuildinfo
 .run
+.netlify
+.playwright-cli
+playwright-report
+test-results
 
 # local env files
 **/.env

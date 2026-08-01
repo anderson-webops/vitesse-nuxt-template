@@ -1,8 +1,11 @@
 import process from 'node:process'
 import { appDescription } from './src/constants/index'
 
+const devApiOrigin = process.env.DEV_API_ORIGIN || 'http://127.0.0.1:3006'
+
 export default defineNuxtConfig({
   modules: [
+    'nuxt-security',
     '@vueuse/nuxt',
     '@unocss/nuxt',
     '@pinia/nuxt',
@@ -11,7 +14,9 @@ export default defineNuxtConfig({
   ],
 
   devtools: {
-    enabled: process.env.CI !== 'true' && process.env.NUXT_A11Y_SCAN !== 'true',
+    enabled: process.env.NODE_ENV !== 'production'
+      && process.env.CI !== 'true'
+      && process.env.NUXT_A11Y_SCAN !== 'true',
   },
 
   app: {
@@ -23,7 +28,6 @@ export default defineNuxtConfig({
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       ],
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'description', content: appDescription },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' },
         { name: 'theme-color', media: '(prefers-color-scheme: light)', content: 'white' },
@@ -35,38 +39,71 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
   },
+
   runtimeConfig: {
     public: {
-      apiBaseUrl: process.env.NUXT_PUBLIC_API_BASE_URL || 'http://localhost:3006',
+      apiBaseUrl: '/api',
     },
   },
 
   srcDir: 'src',
+
+  routeRules: {
+    '/**': {
+      headers: {
+        'cross-origin-embedder-policy': 'require-corp',
+        'cross-origin-opener-policy': 'same-origin',
+        'cross-origin-resource-policy': 'same-origin',
+        'origin-agent-cluster': '?1',
+        'permissions-policy': 'accelerometer=(), autoplay=(), camera=(), display-capture=(), encrypted-media=(), fullscreen=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), midi=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), usb=(), web-share=(), xr-spatial-tracking=()',
+      },
+    },
+    '/_nuxt/**': {
+      headers: {
+        'cache-control': 'public, max-age=31536000, immutable',
+      },
+    },
+    '/healthz': {
+      headers: {
+        'cache-control': 'no-store',
+      },
+    },
+  },
+
+  sourcemap: {
+    client: false,
+    server: false,
+  },
 
   future: {
     compatibilityVersion: 4,
   },
 
   experimental: {
-    // when using generate, payload js assets included in sw precache manifest
-    // but missing on offline, disabling extraction it until fixed
-    payloadExtraction: false,
+    payloadExtraction: true,
     renderJsonPayloads: true,
     typedPages: true,
   },
 
-  compatibilityDate: '2024-08-14',
+  compatibilityDate: '2026-07-24',
 
   nitro: {
-    esbuild: {
-      options: {
-        target: 'esnext',
-      },
-    },
+    compressPublicAssets: true,
     prerender: {
       crawlLinks: false,
       routes: ['/'],
       ignore: ['/hi'],
+    },
+  },
+
+  vite: {
+    server: {
+      proxy: {
+        '/api': {
+          changeOrigin: false,
+          target: devApiOrigin,
+        },
+      },
     },
   },
 
@@ -76,6 +113,76 @@ export default defineNuxtConfig({
       nuxt: {
         sortConfigKeys: true,
       },
+    },
+  },
+
+  security: {
+    strict: true,
+    allowedMethodsRestricter: {
+      methods: ['GET', 'HEAD', 'OPTIONS'],
+      throwError: true,
+    },
+    corsHandler: false,
+    csrf: false,
+    headers: {
+      contentSecurityPolicy: {
+        'base-uri': ['\'none\''],
+        'connect-src': ['\'self\''],
+        'default-src': ['\'none\''],
+        'font-src': ['\'self\'', 'data:'],
+        'form-action': ['\'self\''],
+        'frame-ancestors': ['\'none\''],
+        'frame-src': ['\'none\''],
+        'img-src': ['\'self\'', 'data:'],
+        'manifest-src': ['\'self\''],
+        'media-src': ['\'self\''],
+        'object-src': ['\'none\''],
+        'script-src': ['\'self\'', '\'strict-dynamic\'', '\'nonce-{{nonce}}\''],
+        'script-src-attr': ['\'none\''],
+        'style-src': ['\'self\'', '\'nonce-{{nonce}}\''],
+        'upgrade-insecure-requests': true,
+        'worker-src': ['\'self\''],
+      },
+      crossOriginEmbedderPolicy: 'require-corp',
+      crossOriginOpenerPolicy: 'same-origin',
+      crossOriginResourcePolicy: 'same-origin',
+      permissionsPolicy: {
+        'accelerometer': [],
+        'autoplay': [],
+        'camera': [],
+        'display-capture': [],
+        'encrypted-media': [],
+        'fullscreen': [],
+        'geolocation': [],
+        'gyroscope': [],
+        'magnetometer': [],
+        'microphone': [],
+        'midi': [],
+        'payment': [],
+        'picture-in-picture': [],
+        'publickey-credentials-get': [],
+        'screen-wake-lock': [],
+        'usb': [],
+        'web-share': [],
+        'xr-spatial-tracking': [],
+      },
+      referrerPolicy: 'strict-origin-when-cross-origin',
+      strictTransportSecurity: {
+        includeSubdomains: false,
+        maxAge: 31_536_000,
+        preload: false,
+      },
+      xContentTypeOptions: 'nosniff',
+      xFrameOptions: 'DENY',
+    },
+    hidePoweredBy: true,
+    nonce: true,
+    rateLimiter: false,
+    removeLoggers: false,
+    requestSizeLimiter: false,
+    sri: true,
+    xssValidator: {
+      throwError: true,
     },
   },
 })

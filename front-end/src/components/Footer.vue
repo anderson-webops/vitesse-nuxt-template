@@ -3,7 +3,7 @@
     <NuxtLink i-carbon-campsite to="/" aria-label="Home" />
     <a
       i-carbon-logo-github
-      href="https://github.com/antfu/vitesse-nuxt3"
+      href="https://github.com/antfu/vitesse-nuxt"
       aria-label="Vitesse Nuxt on GitHub"
       rel="noreferrer"
       target="_blank"

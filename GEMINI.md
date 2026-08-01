@@ -3,9 +3,14 @@
 - This repository is the Nuxt monorepo template derived from `antfu/vitesse-nuxt`.
 - Keep `origin` pointed at the template repository and `upstream` pointed at `antfu/vitesse-nuxt`.
 - Maintain the root npm workspace pattern with exactly two primary workspaces: `front-end` and `back-end`.
-- Validate template changes with `npm run lint`, `npm run typecheck`, and `npm run build` before pushing.
+- Use Node 24.18.1 with npm 12.0.2 and validate template changes with `npm run audit:all`, `npm run audit:prod`,
+  `npm run validate`, and `npm run a11y` before pushing.
 - Keep `package-lock.json` up to date whenever dependencies or workspace manifests change.
+- Keep `back-end/package-lock.json` in parity with the backend manifest because the API image uses it for its
+  production-only install.
 - Do not leave completed template work uncommitted or unpushed.
+- Preserve the separate `frontend` and `api` container targets and the Netlify function adapter so every production path
+  deploys the Express backend instead of silently discarding it.
 
 ## Dependency & Lockfile Discipline
 

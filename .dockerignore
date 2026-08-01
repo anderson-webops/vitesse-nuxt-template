@@ -1,5 +1,7 @@
 .git
 .github
+.gitignore
+.gitattributes
 .nuxt
 .output
 node_modules
@@ -7,7 +9,10 @@ node_modules
 front-end/.nuxt
 front-end/.output
 back-end/dist
+back-end/test
 dist
+docs
+netlify
 .env
 .env.*
 !.env.example

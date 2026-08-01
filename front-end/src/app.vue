@@ -24,7 +24,19 @@ body,
   padding: 0;
 }
 
+html {
+  color: #111827;
+  background: #fff;
+}
+
 html.dark {
+  color: #f3f4f6;
+  background: #111827;
   color-scheme: dark;
+}
+
+body {
+  color: inherit;
+  background: inherit;
 }
 </style>

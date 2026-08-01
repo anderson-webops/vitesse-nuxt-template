@@ -1,30 +1,91 @@
-import cors from 'cors'
 import express from 'express'
+import { rateLimit } from 'express-rate-limit'
 import helmet from 'helmet'
 
-const startedAt = Date.now()
-let pageview = 0
+const allowedMethods = ['GET', 'HEAD', 'OPTIONS'] as const
+const allowHeader = allowedMethods.join(', ')
 
-export function createApp() {
+export interface AppOptions {
+  trustProxyHops?: number
+}
+
+function validateTrustProxyHops(value: number) {
+  if (!Number.isSafeInteger(value) || value < 0 || value > 2)
+    throw new RangeError('trustProxyHops must be an integer between 0 and 2')
+}
+
+export function createApp(options: AppOptions = {}) {
+  const trustProxyHops = options.trustProxyHops ?? 0
+  validateTrustProxyHops(trustProxyHops)
+
   const app = express()
 
+  app.disable('etag')
   app.disable('x-powered-by')
-  app.use(helmet({ contentSecurityPolicy: false }))
-  app.use(cors({ origin: true, credentials: true }))
-  app.use(express.json())
+  app.set('query parser', 'simple')
+  if (trustProxyHops > 0)
+    app.set('trust proxy', trustProxyHops)
 
-  app.get('/api/health', (_request, response) => {
-    response.json({
-      ok: true,
-      startedAt,
-    })
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        baseUri: ["'none'"],
+        defaultSrc: ["'none'"],
+        formAction: ["'none'"],
+        frameAncestors: ["'none'"],
+      },
+      useDefaults: false,
+    },
+    strictTransportSecurity: {
+      includeSubDomains: false,
+      maxAge: 31_536_000,
+      preload: false,
+    },
+    xFrameOptions: { action: 'deny' },
+  }))
+
+  app.use('/api', (request, response, next) => {
+    if (request.method === 'OPTIONS') {
+      response.set('Allow', allowHeader).status(204).end()
+      return
+    }
+
+    if (!allowedMethods.includes(request.method as typeof allowedMethods[number])) {
+      response.set('Allow', allowHeader).status(405).json({ error: 'method_not_allowed' })
+      return
+    }
+
+    next()
   })
 
-  app.get('/api/pageview', (_request, response) => {
-    response.json({
-      pageview: pageview++,
-      startAt: startedAt,
-    })
+  app.use('/api', rateLimit({
+    legacyHeaders: false,
+    limit: 300,
+    passOnStoreError: false,
+    skip: request => request.path === '/health',
+    standardHeaders: 'draft-8',
+    windowMs: 60_000,
+  }))
+
+  app.get('/api/health', (_request, response) => {
+    response.set('Cache-Control', 'no-store').json({ ok: true })
+  })
+
+  app.use('/api', (_request, response) => {
+    response.status(404).json({ error: 'not_found' })
+  })
+
+  app.use((_request, response) => {
+    response.status(404).json({ error: 'not_found' })
+  })
+
+  app.use((error: unknown, _request: express.Request, response: express.Response, next: express.NextFunction) => {
+    if (response.headersSent) {
+      next(error)
+      return
+    }
+
+    response.status(500).json({ error: 'internal_server_error' })
   })
 
   return app

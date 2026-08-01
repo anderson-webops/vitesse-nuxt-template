@@ -1,10 +1,10 @@
 <script setup lang="ts">
 const route = useRoute<'hi-id'>()
 const user = useUserStore()
-const name = route.params.id
+const name = computed(() => String(route.params.id).slice(0, 80))
 
 watchEffect(() => {
-  user.setNewName(route.params.id as string)
+  user.setNewName(name.value)
 })
 
 definePageMeta({
@@ -27,7 +27,7 @@ definePageMeta({
         <span class="text-gray-700 dark:text-gray-300">Also as known as:</span>
         <ul>
           <li v-for="otherName in user.otherNames" :key="otherName">
-            <router-link :to="`/hi/${otherName}`" replace>
+            <router-link :to="{ name: 'hi-id', params: { id: otherName } }" replace>
               {{ otherName }}
             </router-link>
           </li>

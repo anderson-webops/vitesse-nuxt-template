@@ -1,10 +1,15 @@
 <script setup lang="ts">
 const name = ref('')
+const normalizedName = computed(() => name.value.trim().slice(0, 80))
 
 const router = useRouter()
 function go() {
-  if (name.value)
-    router.push(`/hi/${encodeURIComponent(name.value)}`)
+  if (normalizedName.value) {
+    void router.push({
+      name: 'hi-id',
+      params: { id: normalizedName.value },
+    })
+  }
 }
 </script>
 
@@ -16,6 +21,7 @@ function go() {
       placeholder="What's your name?"
       type="text"
       autocomplete="off"
+      maxlength="80"
       p="x-4 y-2" m="t-5" w="250px"
       text="center" bg="transparent"
       border="~ rounded gray-200 dark:gray-700"
@@ -25,7 +31,7 @@ function go() {
     <div>
       <button
         text-sm btn m-3
-        :disabled="!name"
+        :disabled="!normalizedName"
         @click="go"
       >
         GO

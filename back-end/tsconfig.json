@@ -4,7 +4,7 @@
 		"incremental": true,
 		"module": "nodenext",
 		"moduleResolution": "nodenext",
-		"sourceMap": true,
+		"sourceMap": false,
 		"outDir": "./dist",
 		"rootDir": "./src",
 		"allowSyntheticDefaultImports": true,
@@ -14,6 +14,7 @@
 		"src/**/*"
 	],
 	"exclude": [
-		"node_modules"
+		"node_modules",
+		"test"
 	]
 }

@@ -2,8 +2,8 @@
 
 ## Project Structure & Module Organization
 
-- `front-end/` contains the Nuxt 4 application. UI lives in `app/components`, layouts in `app/layouts`, routes in
-  `app/pages`, composables in `app/composables`, and app-level config under `app/config` and `app/constants`.
+- `front-end/` contains the Nuxt 4 application. UI lives in `src/components`, layouts in `src/layouts`, routes in
+  `src/pages`, composables in `src/composables`, and shared constants under `src/constants`.
 - `back-end/` contains the standalone Express API. Keep route wiring and middleware in `src/`, and emit compiled output
   to `dist/`.
 - Root files (`package.json`, `tsconfig.base.json`, `eslint.config.js`, `Dockerfile`, `netlify.toml`) define the shared
@@ -11,7 +11,7 @@
 
 ## Build, Test, and Development Commands
 
-- `npm install` installs all workspace dependencies. Use npm at the repo root; do not mix package managers for normal
+- `npm ci` installs the committed workspace dependency graph. Use Node 24.18.1 and npm 12.0.2 at the repo root; do not mix package managers for normal
   development.
 - `npm run dev` starts the Nuxt front-end on port `3333`.
 - `npm run server` starts the Express API with `tsx watch` on port `3006`.
@@ -19,6 +19,7 @@
 - `npm run lint` runs ESLint across both workspaces.
 - `npm run build` generates the static front-end to `front-end/.output/public` and compiles the back-end to
   `back-end/dist`.
+- `npm run validate` runs the native-binding, lint, type, API test, build, and deployment-output gates.
 
 ## Coding Style & Naming Conventions
 
@@ -32,6 +33,9 @@
 
 - Run `npm run lint`, `npm run typecheck`, and `npm run build` before pushing template changes.
 - When changing API behavior, verify both the front-end call site and the Express route behavior together.
+- Keep browser API traffic same-origin at `/api`; deployment adapters must route that path to the Express app.
+- Preserve both final Docker targets (`frontend` and `api`) and the Netlify function adapter. Do not compile and discard
+  the backend in a production path.
 - Treat template breakage as high impact: small config changes can affect every downstream repo created from this
   template.
 
@@ -47,6 +51,8 @@
 - Do not leave completed work uncommitted. After each coherent, validated change set, create a commit and push it in
   the same session.
 - Keep `package-lock.json` synchronized with dependency changes before every commit or push.
+- Keep `back-end/package-lock.json` synchronized with backend manifest changes; it is the production-only API image lock,
+  while the root lock remains authoritative for workspace development and Netlify.
 - Prefer small, logically grouped commits over one mixed commit.
 
 ## Dependency & Lockfile Discipline
