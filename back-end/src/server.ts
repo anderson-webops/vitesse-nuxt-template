@@ -3,22 +3,10 @@ import process from 'node:process'
 import 'dotenv/config'
 
 import { createApp } from './app.js'
-
-function parseInteger(name: string, rawValue: string | undefined, fallback: number, minimum: number, maximum: number) {
-  if (rawValue === undefined || rawValue === '')
-    return fallback
-
-  const value = Number(rawValue)
-  if (!Number.isSafeInteger(value) || value < minimum || value > maximum)
-    throw new RangeError(`${name} must be an integer between ${minimum} and ${maximum}`)
-
-  return value
-}
+import { readServerConfig } from './server-config.js'
 
 async function main() {
-  const port = parseInteger('PORT', process.env.PORT, 3006, 1, 65_535)
-  const trustProxyHops = parseInteger('TRUST_PROXY_HOPS', process.env.TRUST_PROXY_HOPS, 0, 0, 2)
-  const host = process.env.HOST || '127.0.0.1'
+  const { host, port, trustProxyHops } = readServerConfig()
   const server = createServer(createApp({ trustProxyHops }))
 
   server.headersTimeout = 10_000

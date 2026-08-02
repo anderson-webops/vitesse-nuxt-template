@@ -6,11 +6,11 @@
 - Use Node 24.18.1 with npm 12.0.2 and validate template changes with `npm run audit:all`, `npm run audit:prod`,
   `npm run validate`, and `npm run a11y` before pushing.
 - Keep `package-lock.json` up to date whenever dependencies or workspace manifests change.
-- Keep `back-end/package-lock.json` in parity with the backend manifest because the API image uses it for its
+- Keep `back-end/package-lock.json` in parity with the backend manifest because the direct API runtime uses it for its
   production-only install.
 - Do not leave completed template work uncommitted or unpushed.
-- Preserve the separate `frontend` and `api` container targets and the Netlify function adapter so every production path
-  deploys the Express backend instead of silently discarding it.
+- Preserve the Docker-free direct Nginx/systemd and Netlify adapters so every production path deploys the Express
+  backend instead of silently discarding it.
 
 ## Dependency & Lockfile Discipline
 

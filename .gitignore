@@ -9,6 +9,7 @@
 .playwright-cli
 playwright-report
 test-results
+.vitesse-release-prepared.json
 
 # local env files
 **/.env

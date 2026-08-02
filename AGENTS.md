@@ -6,8 +6,8 @@
   `src/pages`, composables in `src/composables`, and shared constants under `src/constants`.
 - `back-end/` contains the standalone Express API. Keep route wiring and middleware in `src/`, and emit compiled output
   to `dist/`.
-- Root files (`package.json`, `tsconfig.base.json`, `eslint.config.js`, `Dockerfile`, `netlify.toml`) define the shared
-  monorepo toolchain and deployment defaults.
+- Root files (`package.json`, `tsconfig.base.json`, `eslint.config.js`, `netlify.toml`) define the shared monorepo
+  toolchain. `deploy/` contains the direct Nginx/systemd production path.
 
 ## Build, Test, and Development Commands
 
@@ -34,8 +34,8 @@
 - Run `npm run lint`, `npm run typecheck`, and `npm run build` before pushing template changes.
 - When changing API behavior, verify both the front-end call site and the Express route behavior together.
 - Keep browser API traffic same-origin at `/api`; deployment adapters must route that path to the Express app.
-- Preserve both final Docker targets (`frontend` and `api`) and the Netlify function adapter. Do not compile and discard
-  the backend in a production path.
+- Preserve both Docker-free production adapters: direct Nginx/systemd and Netlify. Do not compile and discard the
+  backend in either production path.
 - Treat template breakage as high impact: small config changes can affect every downstream repo created from this
   template.
 
@@ -51,8 +51,8 @@
 - Do not leave completed work uncommitted. After each coherent, validated change set, create a commit and push it in
   the same session.
 - Keep `package-lock.json` synchronized with dependency changes before every commit or push.
-- Keep `back-end/package-lock.json` synchronized with backend manifest changes; it is the production-only API image lock,
-  while the root lock remains authoritative for workspace development and Netlify.
+- Keep `back-end/package-lock.json` synchronized with backend manifest changes; it is the production-only direct API
+  lock, while the root lock remains authoritative for workspace development and Netlify.
 - Prefer small, logically grouped commits over one mixed commit.
 
 ## Dependency & Lockfile Discipline

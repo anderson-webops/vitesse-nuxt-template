@@ -2,6 +2,7 @@ import request from 'supertest'
 import { describe, expect, it } from 'vitest'
 
 import { createApp } from '../src/app.js'
+import { readServerConfig } from '../src/server-config.js'
 
 describe('API security contract', () => {
   it('serves a minimal, uncached health response with security headers', async () => {
@@ -49,5 +50,17 @@ describe('API security contract', () => {
   it('rejects unsafe proxy-hop configuration', () => {
     expect(() => createApp({ trustProxyHops: -1 })).toThrow(RangeError)
     expect(() => createApp({ trustProxyHops: 3 })).toThrow(RangeError)
+  })
+
+  it('keeps the standalone API on loopback and bounds listener settings', () => {
+    expect(readServerConfig({})).toEqual({ host: '127.0.0.1', port: 3006, trustProxyHops: 0 })
+    expect(readServerConfig({ HOST: '::1', PORT: '3007', TRUST_PROXY_HOPS: '1' })).toEqual({
+      host: '::1',
+      port: 3007,
+      trustProxyHops: 1,
+    })
+    expect(() => readServerConfig({ HOST: '0.0.0.0' })).toThrow(RangeError)
+    expect(() => readServerConfig({ PORT: '0' })).toThrow(RangeError)
+    expect(() => readServerConfig({ TRUST_PROXY_HOPS: '3' })).toThrow(RangeError)
   })
 })

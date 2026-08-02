@@ -5,7 +5,8 @@ This repository adapts [antfu/vitesse-nuxt](https://github.com/antfu/vitesse-nux
 - `front-end/`: a statically generated Nuxt 4 application
 - `back-end/`: a standalone Express 5 API
 
-The browser always calls the API through the same-origin `/api` path. Local development, the two-container deployment, and Netlify each route that path to the Express application without enabling broad CORS access.
+The browser always calls the API through the same-origin `/api` path. Local development, direct Nginx/systemd
+production, and Netlify each route that path to the Express application without enabling broad CORS access.
 
 ## Supported toolchain
 
@@ -45,15 +46,23 @@ The starter API is deliberately public and read-only:
 
 There are no accounts, sessions, roles, promotion, or demotion workflows in this template. Do not infer authorization from the frontend, CORS, or a hidden route. Any downstream application that adds protected data must add authenticated, server-enforced authorization and tests at the Express boundary. See `docs/security-model.md`.
 
-## Container deployment
+## Direct production deployment
 
-The Dockerfile has two final targets: `api` and `frontend`. The frontend target serves static Nuxt output through an unprivileged Nginx process and proxies `/api` to the API service. The API target runs only compiled backend code as the unprivileged Node user and contains no npm, Corepack, or Yarn executables.
+Production does not use Docker or Compose. Nginx serves the generated Nuxt files and proxies `/api` to a loopback-only
+Node process running as the unprivileged `vitesse-template` account under a hardened systemd service. Release
+preparation requires the exact annotated tag and fetched `origin/main`, performs clean development and production-only
+installs, audits and package-provenance checks, code/browser/accessibility validation, and a real direct runtime smoke
+test. Promotion selects the prepared release atomically and rolls back automatically unless health, exact release
+identity, strict headers, and the read-only API policy pass over both local IPv4 and IPv6 TLS paths.
 
 ```bash
-docker compose up --build
+sudo deploy/systemd/install-service.sh
+# Install deploy/nginx/vitesse-nuxt-template.server.conf inside the certificate-covered TLS server.
+deploy/systemd/prepare-release.sh /srv/vitesse-nuxt-template/releases/<release>
+sudo PUBLIC_HOST=site.example deploy/systemd/promote-release.sh /srv/vitesse-nuxt-template/releases/<release>
 ```
 
-The application is then available on `http://127.0.0.1:8080`. Only the frontend port is published; the API remains on the private Compose network.
+See `deploy/README.md` for the exact rollout and rollback contract. The direct API never binds a public interface.
 
 ## Netlify deployment
 
@@ -65,7 +74,7 @@ Netlify generates the Nuxt frontend and bundles the same Express app as `netlify
 | --- | --- | --- |
 | `HOST` | `127.0.0.1` | API listener address |
 | `PORT` | `3006` | API listener port |
-| `TRUST_PROXY_HOPS` | `0` | Number of explicitly trusted reverse-proxy hops; container and Netlify adapters set `1` |
+| `TRUST_PROXY_HOPS` | `0` | Number of explicitly trusted reverse-proxy hops; direct production and Netlify set `1` |
 | `DEV_API_ORIGIN` | `http://127.0.0.1:3006` | Nuxt development proxy target; it is never sent to browsers |
 
 Do not commit secrets. This starter requires none.

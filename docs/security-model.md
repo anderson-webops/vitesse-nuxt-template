@@ -15,7 +15,8 @@ The security boundary is the Express application, not the Nuxt UI. The browser u
 - Listener ports and proxy-hop counts are range checked.
 - Server request, header, keep-alive, and shutdown durations are bounded.
 - Production source maps are disabled.
-- Container processes are unprivileged, use read-only filesystems in Compose, drop Linux capabilities, and expose only the frontend service.
+- The direct API is loopback-only and runs as an unprivileged, capability-free systemd service with a read-only system
+  view; Nginx is the only public listener.
 - npm optional dependencies and Linux ARM64 native lock entries are checked, while unreviewed dependency install scripts fail installation.
 
 ## Requirements for downstream authentication
