@@ -78,3 +78,38 @@ jobs:
           npm run test:promotion
           mkdir -p .ai-work/runs/tagged-artifact
           npm run package:runtime -- "$PWD/.ai-work/runs/tagged-artifact"
+      - name: Verify exact source-release handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          output=.ai-work/runs/tagged-artifact
+          test "$(find "$output" -maxdepth 1 -type f -name '*.tar.gz' | wc -l)" -eq 1
+          (cd "$output" && sha256sum --check SHA256SUMS)
+          python3 -B - "$output" "$GITHUB_SHA" <<'PY'
+          import hashlib
+          import json
+          from pathlib import Path
+          import sys
+
+          output = Path(sys.argv[1])
+          commit = sys.argv[2]
+          receipt = json.loads((output / "acceptance.json").read_text())
+          manifest = json.loads((output / "runtime-manifest.json").read_text())
+          contract = json.loads(Path("deploy/runtime-artifact.json").read_text())
+          archive = output / receipt["archive"]
+          assert receipt["commit"] == manifest["commit"] == commit
+          assert receipt["sha256"] == hashlib.sha256(archive.read_bytes()).hexdigest()
+          assert manifest["contract"] == contract
+          assert contract["deployment"]["schemaVersion"] == 1
+          assert contract["deployment"]["applicationId"] == "vitesse-nuxt-template"
+          PY
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: verified-linux-arm64-direct-release
+          path: |
+            .ai-work/runs/tagged-artifact/*.tar.gz
+            .ai-work/runs/tagged-artifact/SHA256SUMS
+            .ai-work/runs/tagged-artifact/runtime-manifest.json
+            .ai-work/runs/tagged-artifact/acceptance.json
+          if-no-files-found: error
+          retention-days: 30

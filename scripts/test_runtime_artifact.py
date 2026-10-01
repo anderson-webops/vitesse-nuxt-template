@@ -1,3 +1,4 @@
+import copy
 import importlib.util
 import json
 import subprocess
@@ -6,6 +7,7 @@ from pathlib import Path
 import tempfile
 import tarfile
 import unittest
+from unittest.mock import patch
 
 spec = importlib.util.spec_from_file_location("artifact", Path(__file__).with_name("runtime-artifact.py"))
 artifact = importlib.util.module_from_spec(spec)
@@ -39,6 +41,34 @@ class RuntimeArtifactTests(unittest.TestCase):
 
     def test_valid_tree(self):
         artifact.validate(self.root, self.manifest())
+
+    def test_manifest_carries_versioned_host_requirements(self):
+        manifest = self.manifest()
+        self.assertEqual(manifest["contract"]["deployment"]["schemaVersion"], 1)
+        self.assertEqual(manifest["contract"]["deployment"]["applicationId"], "vitesse-nuxt-template")
+        self.assertEqual(manifest["contract"]["deployment"]["migrations"], "none")
+        artifact.validate(self.root, manifest)
+
+    def test_rejects_invalid_host_requirements_even_when_rehashed(self):
+        changes = [
+            lambda value: value["requiredHostCapabilities"].pop(),
+            lambda value: value["requiredHostCapabilities"].append("disable-readiness-v1"),
+            lambda value: value["probes"]["apiReadiness"].update({"failure": 200}),
+            lambda value: value.update({"migrations": "automatic-rollback"}),
+            lambda value: value.update({"hostControlled": []}),
+            lambda value: value.update({"applicationId": "../other-site"}),
+        ]
+        for index, change in enumerate(changes):
+            with self.subTest(change=index):
+                contract = copy.deepcopy(self.contract)
+                change(contract["deployment"])
+                path = self.root.parent / "altered-contract.json"
+                path.write_text(json.dumps(contract))
+                manifest = self.manifest()
+                manifest["contract"] = contract
+                with patch.object(artifact, "CONTRACT", path):
+                    with self.assertRaisesRegex(ValueError, "deployment compatibility contract"):
+                        artifact.validate(self.root, manifest)
 
     def test_hash_tampering(self):
         manifest = self.manifest()

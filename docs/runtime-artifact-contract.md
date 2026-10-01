@@ -7,6 +7,15 @@ generated clients, native runtime bindings, database, provider queue or durable
 application files. Those empty declarations require review when a downstream
 adds features. Logs stay in the existing service journal. No migrations are needed.
 
+The versioned `deployment` section is a source requirement, not a claim that an
+installed host supports it. It names the application, artifact format, required
+host capabilities, API and static-identity probes, migration mode and retained
+artifact recovery. The checked-in verifier rejects incomplete or weakened
+requirements and binds the exact declaration into the hashed runtime manifest.
+The tagged Linux ARM64 workflow also checks that binding and uploads only the
+archive, `SHA256SUMS`, manifest and acceptance receipt. Download and compare
+those exact CI bytes before publishing a source release.
+
 Keep protected configuration and any downstream database, email spool, cache or
 uploads outside immutable releases. Preserve durable state on both promotion and
 rollback. Preserve the exact installed service users, paths and loopback ports;
@@ -39,6 +48,9 @@ rejects development or unrelated packages. The root workspace lock is retained
 as source provenance, not installed in production. The only removed executable
 links are the reviewed JS-only graph's unused `.bin` entries; all other symlinks
 are rejected. There is no dependency-install fallback.
+The back-end production build does not rely on a retained TypeScript incremental
+cache: a missing `dist` tree must be rebuilt before packaging, not hidden by a
+successful no-op compiler exit.
 
 The archive contains a required-path and SHA-256 inventory with its exact source
 commit. Its verifier rejects private paths, undeclared native code, version drift,
@@ -60,6 +72,13 @@ with the meaningful annotated release. The acceptance receipt records harness
 hashes and completed artifact checks. Full source-gate logs remain separate
 evidence. Download and compare published files before claiming delivery.
 
+Before building or changing production, the installed host adapter should read
+the trusted tagged source contract and compare its supported schema, runtime,
+architecture and capability set. Missing support means `host update required`,
+not a build failure. The adapter must separately verify the downloaded archive
+digest, source commit and actual installed artifact. It must never accept a
+candidate's self-declared capabilities as evidence of host support.
+
 ## Operator acceptance and rollback
 
 After any deployment copier, use the root-installed verifier and independently
@@ -77,6 +96,15 @@ the operator's existing reviewed promotion mechanism may switch releases; retain
 the exact previous release and state, and verify health, readiness and identity
 before claiming success. `release.json.deployedAt` is the existing preparation
 timestamp field, not proof that production activated that build.
+
+Report `waiting for CI`, `retry scheduled`, `host update required`, `release
+rejected`, `rolled back`, and `active` as distinct outcomes. Retry only bounded
+transport or resource failures before activation; persistent authentication,
+identity, audit, artifact, migration and readiness failures require investigation.
+After mutation, claim `rolled back` only when the exact retained artifact and its
+own version-appropriate probes pass. The host adapter owns that classification,
+activation accounting, and rollback; this source contract neither grants it
+permission to change ports or credentials nor proves production is current.
 
 ## Netlify and downstream adoption
 
