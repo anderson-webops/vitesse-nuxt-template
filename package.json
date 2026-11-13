@@ -1,7 +1,7 @@
 {
 	"name": "vitesse-nuxt-monorepo",
 	"type": "module",
-	"version": "2.1.27",
+	"version": "2.1.28",
 	"private": true,
 	"packageManager": "npm@12.2.2",
 	"engines": {
@@ -190,7 +190,7 @@
 		"vite-plugin-checker": "file:vendor/vite-plugin-checker-0.14.5-webops.1.tgz",
 		"yaml": "^2.9.1",
 		"@vitejs/devtools": "0.8.2",
-		"vite": "file:vendor/vite-8.3.6-webops.3.tgz",
+		"vite": "file:vendor/vite-8.3.8-webops.1.tgz",
 		"rollup": "^4.68.3",
 		"@unocss/transformer-attributify-jsx": "file:vendor/unocss-transformer-attributify-jsx-66.13.0-webops.1.tgz",
 		"oxc-parser": "0.158.0",

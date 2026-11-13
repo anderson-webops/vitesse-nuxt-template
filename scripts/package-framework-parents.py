@@ -17,12 +17,12 @@ IO = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(IO)
 PACKAGES = {
     "vite": {
-        "version": "8.3.6",
-        "revision": 3,
+        "version": "8.3.8",
+        "revision": 1,
         "count": 37,
         "section": "dependencies",
         "provider": "rolldown",
-        "before": "~1.2.16",
+        "before": "~1.2.18",
         "after": "~1.3.0",
         "required": {"LICENSE.md", "bin/vite.js", "client.d.ts", "dist/client/client.mjs", "dist/node/index.js", "dist/node/index.d.ts", "dist/node/chunks/node.js"},
         "replacements": [

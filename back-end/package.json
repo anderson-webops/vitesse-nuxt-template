@@ -1,6 +1,6 @@
 {
   "name": "back-end",
-  "version": "2.1.27",
+  "version": "2.1.28",
   "private": true,
   "description": "Minimal Express API for the vitesse-nuxt monorepo template.",
   "type": "module",

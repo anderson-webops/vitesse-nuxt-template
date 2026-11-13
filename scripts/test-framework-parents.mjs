@@ -49,7 +49,7 @@ test('all actual framework consumers bind the qualified providers and complete o
   const lock = JSON.parse(readFileSync(path.join(root, 'package-lock.json'), 'utf8')).packages
   const original = JSON.parse(readFileSync(path.join(root, 'vendor/framework-parents/upstream/package-lock.json'), 'utf8')).packages
   for (const [name, version] of Object.entries({
-    vite: '8.3.6+webops.3',
+    vite: '8.3.8+webops.1',
     nuxt: '4.6.4+webops.2',
     nitropack: '2.13.6+webops.1',
     rolldown: '1.3.2',
@@ -61,10 +61,10 @@ test('all actual framework consumers bind the qualified providers and complete o
       assert.equal(metadata.version, version, filename)
   }
   for (const [name, version] of Object.entries({
-    vite: '8.3.6',
+    vite: '8.3.8',
     nuxt: '4.6.4',
     nitropack: '2.13.6',
-    rolldown: '1.2.16',
+    rolldown: '1.2.19',
     c12: '3.3.4',
   }))
     assert.equal(original[`node_modules/${name}`].version, version)

@@ -16,6 +16,20 @@ RECORDS = json.loads((PRODUCER.SOURCE / "UPSTREAM.json").read_text())
 
 
 class FrameworkParentTests(unittest.TestCase):
+    def test_current_vite_input_and_retained_predecessor_have_distinct_identities(self):
+        record = RECORDS["vite"]
+        self.assertEqual(record["package"]["version"], "8.3.8")
+        self.assertEqual(record["patchedVersion"], "8.3.8+webops.1")
+        self.assertEqual(record["package"]["dependencies"]["rolldown"], "~1.2.18")
+        payload = (PRODUCER.SOURCE / "upstream/vite-8.3.6.tgz").read_bytes()
+        files, modes = PRODUCER.archive_files(payload)
+        _, changed = self.changed_record(record, files, modes)
+        changed["registryIntegrity"] = PRODUCER.IO.integrity(payload)
+        changed["registryArchiveSha256"] = hashlib.sha256(payload).hexdigest()
+        changed["package"] = json.loads(files["package/package.json"])
+        with self.assertRaisesRegex(ValueError, "version and license"):
+            PRODUCER.build_archive(payload, changed)
+
     def originals(self):
         for name, record in RECORDS.items():
             yield name, (PRODUCER.SOURCE / record["archive"]).read_bytes(), record

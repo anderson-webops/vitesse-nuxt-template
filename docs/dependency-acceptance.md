@@ -30,18 +30,23 @@ application validation remain separate required gates.
 
 ## Framework bundler and configuration parents
 
-The active framework uses Rolldown 1.3.0 and c12 4.0.0-rc.4. The c12 version is
-the publisher's current `latest` prerelease and is already embedded in Nuxt kit;
+The active framework uses Vite 8.3.8, Rolldown 1.3.2 and c12 4.0.0-rc.4. The
+c12 version is the publisher's current `latest` prerelease and is already embedded in Nuxt kit;
 the independently installed Nitro configuration loader is qualified on the same
-major. Original Rolldown 1.2.16, c12 3.3.4 and registry framework parents remain
+major. Original Rolldown 1.2.19, c12 3.3.4 and registry framework parents remain
 in the independently installed, audited and signature-verified reference graph.
 
 `vendor/framework-parents/UPSTREAM.json` binds 774 original files, including
 every executable mode, type, runtime and license. The reproducible distributions
-are Vite 8.3.6+webops.3, Nuxt 4.6.4+webops.2 and Nitro 2.13.6+webops.1.
+are Vite 8.3.8+webops.1, Nuxt 4.6.4+webops.2 and Nitro 2.13.6+webops.1.
 Build metadata preserves normal framework SemVer comparisons while identifying
 the reviewed local distributions. Their provider contracts select the qualified
 versions; the original metadata is retained inside each archive.
+
+The Vite 8.3.8 input retains its upstream fixes for development workers,
+type-only imports, CSS entry validation and the bundled WebSocket transport.
+The retained 8.3.6 original and maintained archives keep their exact bytes;
+the successor has a separate source inventory and distribution identity.
 
 Nuxt consistently bundles its `unctx` runtime because its transform emits an
 absolute helper import alongside bare application imports. This fixes the
