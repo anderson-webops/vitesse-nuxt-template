@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { Buffer } from 'node:buffer'
 import { readFileSync } from 'node:fs'
-import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, rename, rm, writeFile } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import path from 'node:path'
 import process from 'node:process'
@@ -43,6 +43,12 @@ async function until(predicate, message) {
     assert.ok(Date.now() < deadline, message)
     await delay(20)
   }
+}
+
+async function publishConfiguration(filename, contents) {
+  const pending = `${filename}.pending`
+  await writeFile(pending, contents)
+  await rename(pending, filename)
 }
 
 test('all actual framework consumers bind the qualified providers and complete original parent identities', () => {
@@ -224,21 +230,26 @@ test('the current native configuration watcher survives invalid updates and clos
   const watched = await configuration.watchConfig({
     ...options(directory),
     debounce: 20,
-    onWatch: event => events.push(event),
+    onWatch: event => events.push({
+      ...event,
+      contents: readFileSync(event.path, 'utf8'),
+    }),
     onUpdate: value => updates.push(value),
   })
   context.after(() => watched.unwatch())
   assert.ok(watched.watchingFiles.includes(filename))
-  await writeFile(filename, 'export default {')
-  await until(() => warnings.length > 0, 'Invalid config must be observed and retained as a failure')
+  await publishConfiguration(filename, 'export default {')
+  await until(() => warnings.some(message => message.startsWith('Failed to load config ')), 'Invalid config must be observed and retained as a failure')
+  assert.ok(events.some(event => event.path === filename && event.contents === 'export default {'))
+  assert.equal(updates.length, 0)
   assert.equal(watched.config.value, 1)
-  await writeFile(filename, 'export default {value:2}')
+  await publishConfiguration(filename, 'export default {value:2}')
   await until(() => watched.config.value === 2, 'Valid config recovery must arrive')
   assert.equal(updates.at(-1).newConfig.config.value, 2)
   assert.ok(events.some(event => event.type === 'updated'))
   await watched.unwatch()
   const count = events.length
-  await writeFile(filename, 'export default {value:3}')
+  await publishConfiguration(filename, 'export default {value:3}')
   await delay(100)
   assert.equal(events.length, count)
 })
@@ -258,6 +269,6 @@ test('the actual Nitro parent reads and watches current-major configuration', as
   })
   context.after(() => current._c12.unwatch())
   assert.equal(current.runtimeConfig.fixture, 42)
-  await writeFile(path.join(directory, 'nitro.config.mjs'), 'export default {runtimeConfig:{fixture:84}}')
+  await publishConfiguration(path.join(directory, 'nitro.config.mjs'), 'export default {runtimeConfig:{fixture:84}}')
   await until(() => current._c12.config.runtimeConfig.fixture === 84, 'Actual Nitro current-major configuration watcher must reload')
 })

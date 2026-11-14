@@ -1,7 +1,7 @@
 {
 	"name": "vitesse-nuxt-monorepo",
 	"type": "module",
-	"version": "2.1.30",
+	"version": "2.1.31",
 	"private": true,
 	"packageManager": "npm@12.2.2",
 	"engines": {
@@ -231,8 +231,8 @@
 		"braces": "$braces",
 		"listhen": "$listhen",
 		"qs": "$qs",
-    "glob": "14.0.6",
-    "minimatch": "11.0.8",
+		"glob": "14.0.6",
+		"minimatch": "11.0.8",
 		"esbuild": "^0.28.2",
 		"launch-editor": {
 			".": "2.14.2",
