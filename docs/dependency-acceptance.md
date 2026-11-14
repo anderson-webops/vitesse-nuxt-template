@@ -1,5 +1,29 @@
 # Dependency acceptance
 
+## Immutable maintained local libraries
+
+The application installs maintained Braces 3.0.4-webops.3, Deepmerge
+4.3.2-webops.2 and Listhen 1.10.1-webops.3 from reproducible archives.
+Their reviewed source, licenses and original manifests remain intact under
+`vendor/`; `vendor/local-libraries/INPUTS.json` binds all 39 original files
+to the exact source revision. Only distribution version/private metadata and
+provenance members are added. Earlier framework reference archives stay exact.
+
+These archives replace folder links, which npm treats as separate projects
+during updates. Linked Listhen could acquire a raw Jiti dependency and resolve
+the root-relative maintained Jiti override below its own source directory,
+breaking the following clean installation. Ordinary archive installation keeps
+all three libraries and their overridden dependencies in the application graph.
+
+`npm run package:local-libraries` reproduces the immutable distributions;
+`npm run check:local-libraries` verifies source hashes, exact archive bytes,
+every consuming lock identity and installed byte, and Listhen's executable CLI.
+`npm run test:local-libraries` covers restrictive umasks, required licenses and
+entrypoints, changed source, unsafe paths, links, lock tampering, nested
+linked projects and installed-file tampering. Existing behavior regressions
+exercise the installed distributions. Normal updates followed by strict locked
+installation remain required alongside full source and dependency checks.
+
 ## Schema and identifier parents
 
 The application graph uses Ajv 8.20.0, Fast URI 4.2.3 and NanoID 6.0.2.
