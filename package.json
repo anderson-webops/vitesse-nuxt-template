@@ -231,8 +231,8 @@
 		"braces": "$braces",
 		"listhen": "$listhen",
 		"qs": "$qs",
-		"glob": "14.0.4",
-		"minimatch": "11.0.5",
+    "glob": "14.0.6",
+    "minimatch": "11.0.8",
 		"esbuild": "^0.28.2",
 		"launch-editor": {
 			".": "2.14.2",
