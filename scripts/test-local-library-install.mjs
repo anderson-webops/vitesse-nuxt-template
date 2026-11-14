@@ -8,7 +8,7 @@ import { selectedNpmCli } from './build-toolchain-state.mjs'
 
 const root = path.resolve(import.meta.dirname, '..')
 
-test('ordinary updates and clean installs preserve archived libraries and the maintained loader', { timeout: 180000 }, async () => {
+test('cold installation, updates and clean installs preserve archived libraries and the maintained loader', { timeout: 180000 }, async () => {
   const runs = path.join(root, '.ai-work/runs')
   await mkdir(runs, { recursive: true })
   const directory = await mkdtemp(path.join(runs, 'local-library-install-'))
@@ -36,10 +36,15 @@ test('ordinary updates and clean installs preserve archived libraries and the ma
     }))
     const commands = ['install', 'update', 'ci']
     for (const command of commands) {
+      const networkOptions = []
+      if (command !== 'install')
+        networkOptions.push('--offline')
       const result = spawnSync(process.execPath, [
         selectedNpmCli(),
         command,
-        '--offline',
+        ...networkOptions,
+        '--cache',
+        path.join(directory, 'download-cache'),
         '--ignore-scripts',
         '--include=optional',
         '--no-fund',

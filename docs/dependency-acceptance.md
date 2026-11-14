@@ -21,8 +21,10 @@ every consuming lock identity and installed byte, and Listhen's executable CLI.
 `npm run test:local-libraries` covers restrictive umasks, required licenses and
 entrypoints, changed source, unsafe paths, links, lock tampering, nested
 linked projects and installed-file tampering. Existing behavior regressions
-exercise the installed distributions. Normal updates followed by strict locked
-installation remain required alongside full source and dependency checks.
+exercise the installed distributions. The executable installation regression
+starts with its own empty download cache, then updates and reinstalls offline
+using only that first installation's inputs. Normal updates followed by strict
+locked installation remain required alongside full source and dependency checks.
 
 ## Schema and identifier parents
 
