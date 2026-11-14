@@ -208,8 +208,17 @@ the bridge and upstream modules independently of the generated inventory and
 exercises cookie serialization, URL encoding, MIME matching, UTF-32 reading
 and body limits without source or development dependencies.
 
-Builds use npm 12.2.2 with Node 26.13.0. Its bundled Undici 6.29.1 replaces
-the affected 6.29.0 copy in npm 12.2.1, covering
+Builds use npm 12.2.2 with Node 26.13.1. The Node security baseline is the
+[November 11 security release](https://nodejs.org/en/blog/release/v26.13.1).
+The API checks this minimum before application construction; the independent
+artifact contract requires the compiled guard. Earlier signed-source Unimport
+archives retain their original identities. The `7.0.2+webops.3` archive records
+the secured build runtime and reproduces from two fresh source directories.
+Independent original/control graphs may retain compatible minimum ranges;
+the qualified executable and build provenance select the exact secured patch.
+
+The independently locked build profile selects Undici 8.12.4. The original
+npm 12.2.2 bundle advanced the affected 6.29.0 copy in npm 12.2.1 to 6.29.1 for
 https://github.com/nodejs/undici/security/advisories/GHSA-2m5v-pch6-74hx and
 https://github.com/nodejs/undici/security/advisories/GHSA-qrxm-fqhp-jwvm.
 Application dependency overrides do not update npm's private dependency tree.
@@ -259,7 +268,7 @@ Normal audits include that graph. Integrity, cancellation, bounded pattern
 expansion, offline pack/install/executable delivery and source-only cold
 bootstrap are required regressions. Seed-only ignored-script settings do not
 leak into application installation. No global tool or security setting changes.
-The bootstrap-only manifest accepts Node 26.13.0's bundled npm 11.20.0. Its role
+The bootstrap-only manifest accepts Node 26.13.1's bundled npm 11.20.0. Its role
 is a script-free locked installation of the reviewed profile, not application
 installation or release qualification. The application engine and selected
 build-profile checks remain pinned to the repaired npm 12.2.2 distribution.
@@ -365,7 +374,7 @@ checks reject both compiler packages; Linux ARM64 binding and artifact checks
 remain required.
 
 Nuxt 4.6.4 requires `unimport ^7.0.2`. Its locked and installed provider must
-satisfy that original API contract. The maintained `7.0.2+webops.2` provider is
+satisfy that original API contract. The maintained `7.0.2+webops.3` provider is
 independently rebuilt from the complete signed v7.0.2 source tree. Both signed
 Git objects, the public signer, all 224 source files, the independent audited
 compiler lock, source patch and resulting installed bytes are verified.

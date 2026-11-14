@@ -2,6 +2,7 @@ import express from 'express'
 import { rateLimit } from 'express-rate-limit'
 import helmet from 'helmet'
 import { BoundedRateStore } from './boundedRateStore.js'
+import { assertSupportedRuntime } from './runtime-version.js'
 
 const allowedMethods = ['GET', 'HEAD', 'OPTIONS'] as const
 const allowHeader = allowedMethods.join(', ')
@@ -18,6 +19,7 @@ function validateTrustProxyHops(value: number) {
 }
 
 export function createApp(options: AppOptions = {}) {
+  assertSupportedRuntime()
   const trustProxyHops = options.trustProxyHops ?? 0
   validateTrustProxyHops(trustProxyHops)
 

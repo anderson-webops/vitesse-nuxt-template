@@ -27,8 +27,8 @@ Existing directories with different ownership or modes are likewise left
 unchanged and rejected rather than silently normalized.
 The installer does not start or restart a service.
 
-Use Node 26.13.0 from the approved protected location, normally
-`/opt/node-26.13.0/bin`, and the independently locked `webops-locked-npm-v1`
+Use Node 26.13.1 from the approved protected location, normally
+`/opt/node-26.13.1/bin`, and the independently locked `webops-locked-npm-v1`
 profile for npm 12.2.2 builds. Preparation selects and audits the profile before
 installing the application; the host's original npm is only the bootstrap seed.
 `NODE_BIN_DIR` can select an
@@ -44,7 +44,7 @@ As the unprivileged build account, use a clean checkout beneath `builds/`, its
 annotated version tag and the exact fetched canonical `origin/main`. Run:
 
 ```bash
-NODE_BIN_DIR=/opt/node-26.13.0/bin \
+NODE_BIN_DIR=/opt/node-26.13.1/bin \
   deploy/systemd/prepare-release.sh /srv/vitesse-nuxt-template/builds/<release>
 ```
 
@@ -78,7 +78,7 @@ extracted files, not a build tree changed to root ownership. The promoter verifi
 that protected staged tree against the original protected archive again:
 
 ```bash
-PUBLIC_HOST=site.example NODE_BIN_DIR=/opt/node-26.13.0/bin \
+PUBLIC_HOST=site.example NODE_BIN_DIR=/opt/node-26.13.1/bin \
   /usr/local/libexec/vitesse-release/<version>/deploy/systemd/promote-release.sh \
   /srv/vitesse-nuxt-template/releases/<new-release> \
   <protected-archive> <reviewed-sha256> <reviewed-commit>
